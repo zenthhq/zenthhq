@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zenth Tab — A beautiful new tab for Chrome</title>
+  <meta name="description" content="Replace your new tab with a stunning, minimal dashboard. Pomodoro, tasks, wallpapers, shortcuts and more. Pay once, yours forever."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --teal: #2dd4bf;
+      --teal-dim: rgba(45,212,191,0.15);
+      --teal-border: rgba(45,212,191,0.25);
+      --bg: #060f16;
+      --bg2: #0d1f2d;
+      --bg3: #071521;
+      --white: #ffffff;
+      --white-70: rgba(255,255,255,0.7);
+      --white-40: rgba(255,255,255,0.4);
+      --white-15: rgba(255,255,255,0.15);
+      --white-08: rgba(255,255,255,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 4rem;
+      background: rgba(6,15,22,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--white-08);
+    }
+
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--white);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo span {
+      color: var(--teal);
+    }
+
+    .nav-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      color: var(--teal);
+      background: var(--teal-dim);
+      border: 1px solid var(--teal-border);
+      border-radius: 20px;
+      padding: 2px 8px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--white-70);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .btn-primary {
+      background: var(--teal);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.4rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white-70);
+      border: 1px solid var(--white-15);
+      border-radius: 8px;
+      padding: 0.6rem 1.4rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 400;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--teal-border);
+      color: var(--teal);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(45,212,191,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--teal);
+      opacity: 0.5;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      max-width: 800px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--teal);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--white-70);
+      max-width: 520px;
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+
+    .hero-note {
+      font-size: 0.75rem;
+      color: var(--white-40);
+      margin-top: -2rem;
+      margin-bottom: 3rem;
+    }
+
+    /* ── BROWSER MOCKUP ── */
+    .browser-mockup {
+      width: 100%;
+      max-width: 900px;
+      background: var(--bg2);
+      border-radius: 12px;
+      border: 1px solid var(--white-08);
+      overflow: hidden;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(45,212,191,0.1);
+    }
+
+    .browser-bar {
+      background: #0a1a27;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--white-08);
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .browser-dot:nth-child(1) { background: #ff5f57; }
+    .browser-dot:nth-child(2) { background: #febc2e; }
+    .browser-dot:nth-child(3) { background: #28c840; }
+
+    .browser-url {
+      flex: 1;
+      background: var(--white-08);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: var(--white-40);
+      text-align: center;
+    }
+
+    .browser-content {
+      padding: 3rem 2rem;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      background: linear-gradient(135deg, #060f16 0%, #0d1f2d 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mockup-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=60&auto=format');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.3;
+    }
+
+    .mockup-clock {
+      font-size: 4rem;
+      font-weight: 200;
+      letter-spacing: -2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mockup-clock span { color: var(--teal); }
+
+    .mockup-date {
+      font-size: 0.85rem;
+      color: var(--white-70);
+      position: relative;
+      z-index: 1;
+      margin-top: -1rem;
+    }
+
+    .mockup-quote {
+      font-size: 0.8rem;
+      color: var(--white-70);
+      font-style: italic;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mockup-widgets {
+      display: flex;
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mockup-widget {
+      background: rgba(13,31,45,0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--teal-border);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      color: var(--white-70);
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .mockup-widget strong {
+      display: block;
+      color: var(--teal);
+      font-size: 1.1rem;
+      font-weight: 300;
+    }
+
+    /* ── SECTION COMMONS ── */
+    section {
+      padding: 6rem 2rem;
+      position: relative;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--teal);
+      opacity: 0.6;
+    }
+
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    h2 em { font-style: italic; color: var(--teal); }
+
+    .section-sub {
+      color: var(--white-70);
+      font-size: 1.05rem;
+      max-width: 500px;
+      margin-bottom: 3.5rem;
+    }
+
+    /* ── FEATURES FREE ── */
+    #features { background: var(--bg); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--white-08);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--teal-border);
+      transform: translateY(-3px);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .feature-title {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--white);
+    }
+
+    .feature-desc {
+      font-size: 0.875rem;
+      color: var(--white-70);
+      line-height: 1.6;
+    }
+
+    /* ── PRO SECTION ── */
+    #pro {
+      background: var(--bg2);
+      border-top: 1px solid var(--white-08);
+      border-bottom: 1px solid var(--white-08);
+    }
+
+    .pro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .pro-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .pro-features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--white-70);
+    }
+
+    .pro-features-list li::before {
+      content: '✓';
+      color: var(--teal);
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .pro-card {
+      background: var(--bg3);
+      border: 1px solid var(--teal-border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pro-card::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(45,212,191,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .pro-price {
+      font-family: 'DM Serif Display', serif;
+      font-size: 4rem;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .pro-price-note {
+      font-size: 0.8rem;
+      color: var(--white-40);
+      margin-bottom: 2rem;
+    }
+
+    .pro-card-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.5rem;
+    }
+
+    .pro-divider {
+      height: 1px;
+      background: var(--white-08);
+      margin: 1.5rem 0;
+    }
+
+    .pro-pay-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* ── PRICING TABLE ── */
+    #pricing { background: var(--bg); }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: var(--bg2);
+      border: 1px solid var(--white-08);
+      border-radius: 20px;
+      padding: 2rem;
+    }
+
+    .pricing-card.featured {
+      border-color: var(--teal-border);
+      background: var(--bg3);
+      position: relative;
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--teal);
+      color: var(--bg);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .pricing-name {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white-40);
+      margin-bottom: 1rem;
+    }
+
+    .pricing-price {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem;
+      font-weight: 400;
+      margin-bottom: 0.25rem;
+    }
+
+    .pricing-period {
+      font-size: 0.8rem;
+      color: var(--white-40);
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-features li {
+      font-size: 0.85rem;
+      color: var(--white-70);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--teal);
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .pricing-features li.muted {
+      color: var(--white-40);
+    }
+
+    .pricing-features li.muted::before {
+      content: '—';
+      color: var(--white-15);
+    }
+
+    /* ── FAQ ── */
+    #faq { background: var(--bg2); border-top: 1px solid var(--white-08); }
+
+    .faq-list {
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--white-08);
+    }
+
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      text-align: left;
+      padding: 1.25rem 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .faq-q span {
+      transition: transform 0.3s;
+      color: var(--teal);
+      font-size: 1.1rem;
+    }
+
+    .faq-q.open span { transform: rotate(45deg); }
+
+    .faq-a {
+      font-size: 0.9rem;
+      color: var(--white-70);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.3s;
+    }
+
+    .faq-a.open {
+      max-height: 300px;
+      padding-bottom: 1.25rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--white-08);
+      padding: 3rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem;
+      color: var(--white-70);
+      text-decoration: none;
+    }
+
+    .footer-logo span { color: var(--teal); }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--white-40);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.8rem;
+      color: var(--white-40);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--teal); }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 50;
+      background: var(--bg2);
+      border: 1px solid var(--white-15);
+      border-radius: 20px;
+      padding: 4px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      color: var(--white-40);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: var(--teal);
+      color: var(--bg);
+      font-weight: 500;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    .fade-up:nth-child(1) { animation-delay: 0.1s; }
+    .fade-up:nth-child(2) { animation-delay: 0.2s; }
+    .fade-up:nth-child(3) { animation-delay: 0.3s; }
+    .fade-up:nth-child(4) { animation-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .pro-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">
+      Zenth <span>Tab</span>
+      <span class="nav-badge" data-en="by Zenth HQ" data-es="de Zenth HQ">by Zenth HQ</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features" data-en="Features" data-es="Funciones">Features</a></li>
+      <li><a href="#pro" data-en="Pro" data-es="Pro">Pro</a></li>
+      <li><a href="#pricing" data-en="Pricing" data-es="Precio">Pricing</a></li>
+      <li><a href="#faq" data-en="FAQ" data-es="FAQ">FAQ</a></li>
+      <li><a class="btn-primary" href="https://chrome.google.com/webstore" target="_blank" data-en="Add to Chrome" data-es="Agregar a Chrome">Add to Chrome</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-glow"></div>
+    <p class="hero-eyebrow fade-up" data-en="New Tab Extension for Chrome" data-es="Extensión de nueva pestaña para Chrome">New Tab Extension for Chrome</p>
+    <h1 class="fade-up">
+      <span data-en="Your new tab," data-es="Tu nueva pestaña,">Your new tab,</span><br/>
+      <em data-en="beautifully reimagined." data-es="bellamente reinventada.">beautifully reimagined.</em>
+    </h1>
+    <p class="hero-sub fade-up" data-en="Replace your blank new tab with a stunning dashboard. Tasks, weather, Pomodoro, custom wallpapers and more — pay once, yours forever." data-es="Reemplaza tu nueva pestaña en blanco con un dashboard impresionante. Tareas, clima, Pomodoro, fondos personalizados y más — paga una vez, es tuya para siempre.">
+      Replace your blank new tab with a stunning dashboard. Tasks, weather, Pomodoro, custom wallpapers and more — pay once, yours forever.
+    </p>
+    <div class="hero-actions fade-up">
+      <a class="btn-primary" href="https://chrome.google.com/webstore" target="_blank">
+        ⬦ <span data-en="Add to Chrome — Free" data-es="Agregar a Chrome — Gratis">Add to Chrome — Free</span>
+      </a>
+      <a class="btn-outline" href="#pricing">
+        <span data-en="Get Pro — $15" data-es="Obtener Pro — $15">Get Pro — $15</span>
+      </a>
+    </div>
+    <p class="hero-note" data-en="Free forever · No account required · Chrome only" data-es="Gratis para siempre · Sin cuenta · Solo Chrome">Free forever · No account required · Chrome only</p>
+
+    <!-- SCREENSHOT HERO -->
+    <div class="browser-mockup fade-up">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+        </div>
+        <div class="browser-url">New Tab</div>
+      </div>
+      <div style="overflow:hidden;line-height:0;">
+        <img id="hero-screenshot" src="free-es-main.png" alt="Zenth Tab" style="width:100%;display:block;"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES FREE -->
+  <section id="features">
+    <div class="container">
+      <p class="section-label" data-en="Included for free" data-es="Incluido gratis">Included for free</p>
+      <h2><span data-en="Everything you need," data-es="Todo lo que necesitas,">Everything you need,</span> <em data-en="from day one." data-es="desde el primer día.">from day one.</em></h2>
+      <p class="section-sub" data-en="No account. No ads. No tracking. Just a beautiful new tab that works." data-es="Sin cuenta. Sin anuncios. Sin rastreo. Solo una hermosa nueva pestaña que funciona.">No account. No ads. No tracking. Just a beautiful new tab that works.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🕐</span>
+          <div class="feature-title" data-en="Clock & Date" data-es="Reloj y fecha">Clock & Date</div>
+          <p class="feature-desc" data-en="A clean, minimal clock with date. Always present, never distracting." data-es="Un reloj limpio y minimalista con fecha. Siempre presente, nunca distractor.">A clean, minimal clock with date. Always present, never distracting.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⛅</span>
+          <div class="feature-title" data-en="Live Weather" data-es="Clima en tiempo real">Live Weather</div>
+          <p class="feature-desc" data-en="Your city's weather detected automatically. No setup required." data-es="El clima de tu ciudad detectado automáticamente. Sin configuración.">Your city's weather detected automatically. No setup required.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">✦</span>
+          <div class="feature-title" data-en="Daily Quotes" data-es="Frases del día">Daily Quotes</div>
+          <p class="feature-desc" data-en="A fresh inspirational quote every day, in your language." data-es="Una frase inspiradora nueva cada día, en tu idioma.">A fresh inspirational quote every day, in your language.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">✓</span>
+          <div class="feature-title" data-en="Task List" data-es="Lista de tareas">Task List</div>
+          <p class="feature-desc" data-en="Keep track of up to 5 daily tasks. Simple, fast, distraction-free." data-es="Lleva el control de hasta 5 tareas diarias. Simple, rápido, sin distracciones.">Keep track of up to 5 daily tasks. Simple, fast, distraction-free.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🖼</span>
+          <div class="feature-title" data-en="Rotating Wallpapers" data-es="Fondos rotativos">Rotating Wallpapers</div>
+          <p class="feature-desc" data-en="6 curated Unsplash photos rotating daily. Always fresh." data-es="6 fotos curadas de Unsplash que rotan diariamente. Siempre frescas.">6 curated Unsplash photos rotating daily. Always fresh.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🔗</span>
+          <div class="feature-title" data-en="Quick Shortcuts" data-es="Accesos directos">Quick Shortcuts</div>
+          <p class="feature-desc" data-en="Pin your 3 most visited sites for instant access every new tab." data-es="Fija tus 3 sitios más visitados para acceso instantáneo en cada nueva pestaña.">Pin your 3 most visited sites for instant access every new tab.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRO SCREENSHOTS -->
+  <section id="screenshots" style="background:var(--bg);padding:4rem 2rem;">
+    <div class="container">
+      <p class="section-label" data-en="See it in action" data-es="Míralo en acción">See it in action</p>
+      <h2><span data-en="Free &" data-es="Free y">Free &</span> <em data-en="Pro, side by side." data-es="Pro, lado a lado.">Pro, side by side.</em></h2>
+      <p class="section-sub" data-en="Real screenshots. No mockups." data-es="Capturas reales. Sin mockups.">Real screenshots. No mockups.</p>
+
+      <!-- TABS -->
+      <div style="display:flex;gap:8px;margin-bottom:2rem;">
+        <button class="ss-tab active" onclick="showTab('free')" data-en="Free version" data-es="Versión Free" style="background:var(--teal);color:var(--bg);border:none;border-radius:8px;padding:8px 20px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;">Free version</button>
+        <button class="ss-tab" onclick="showTab('pro')" data-en="Pro version" data-es="Versión Pro" style="background:var(--white-08);color:var(--white-70);border:1px solid var(--white-15);border-radius:8px;padding:8px 20px;font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;">Pro version</button>
+      </div>
+
+      <!-- FREE SCREENSHOTS -->
+      <div id="tab-free" class="ss-panel" style="display:grid;grid-template-columns:1fr;gap:1rem;">
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+            <div class="browser-url" data-en="New Tab — Free" data-es="Nueva pestaña — Free">New Tab — Free</div>
+          </div>
+          <div style="overflow:hidden;line-height:0;">
+            <img src="free-es-main.png" alt="Zenth Tab Free" style="width:100%;display:block;"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRO SCREENSHOTS -->
+      <div id="tab-pro" class="ss-panel" style="display:none;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="browser-mockup" style="grid-column:1/-1;">
+          <div class="browser-bar">
+            <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+            <div class="browser-url" data-en="New Tab — Pro (Sunset theme)" data-es="Nueva pestaña — Pro (tema Sunset)">New Tab — Pro (Sunset theme)</div>
+          </div>
+          <div style="overflow:hidden;line-height:0;">
+            <img src="pro-en-pomodoro.png" alt="Zenth Tab Pro" style="width:100%;display:block;"/>
+          </div>
+        </div>
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+            <div class="browser-url" data-en="Settings panel" data-es="Panel de configuración">Settings panel</div>
+          </div>
+          <div style="overflow:hidden;line-height:0;">
+            <img src="pro-en-settings.png" alt="Zenth Tab Pro Settings" style="width:100%;display:block;"/>
+          </div>
+        </div>
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+            <div class="browser-url" data-en="New Tab — Pro (Teal theme)" data-es="Nueva pestaña — Pro (tema Teal)">New Tab — Pro (Teal theme)</div>
+          </div>
+          <div style="overflow:hidden;line-height:0;">
+            <img src="pro-es-main.png" alt="Zenth Tab Pro ES" style="width:100%;display:block;"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRO -->
+  <section id="pro">
+    <div class="container">
+      <div class="pro-grid">
+        <div>
+          <p class="section-label" data-en="Zenth Tab Pro" data-es="Zenth Tab Pro">Zenth Tab Pro</p>
+          <h2><span data-en="Unlock the" data-es="Desbloquea el">Unlock the</span> <em data-en="full experience." data-es="experiencia completa.">full experience.</em></h2>
+          <p class="section-sub" data-en="One payment. No subscription. No expiration. Ever." data-es="Un solo pago. Sin suscripción. Sin vencimiento. Jamás.">One payment. No subscription. No expiration. Ever.</p>
+          <ul class="pro-features-list">
+            <li data-en="Your own photo as background" data-es="Tu propia foto como fondo">Your own photo as background</li>
+            <li data-en="Daily Unsplash wallpapers" data-es="Fondos Unsplash diarios">Daily Unsplash wallpapers</li>
+            <li data-en="Unlimited tasks" data-es="Tareas ilimitadas">Unlimited tasks</li>
+            <li data-en="Up to 6 custom shortcuts" data-es="Hasta 6 accesos directos personalizados">Up to 6 custom shortcuts</li>
+            <li data-en="Pomodoro timer with focus/break modes" data-es="Temporizador Pomodoro con modos enfoque/descanso">Pomodoro timer with focus/break modes</li>
+            <li data-en="7 color themes" data-es="7 temas de color">7 color themes</li>
+            <li data-en="No upgrade popups, ever" data-es="Sin interrupciones de pago, jamás">No upgrade popups, ever</li>
+          </ul>
+        </div>
+        <div class="pro-card">
+          <p class="pro-card-title" data-en="One-time payment" data-es="Pago único">One-time payment</p>
+          <div class="pro-price">$15</div>
+          <p class="pro-price-note" data-en="Pay once · Use forever" data-es="Paga una vez · Úsalo para siempre">Pay once · Use forever</p>
+          <div class="pro-divider"></div>
+          <div class="pro-pay-options">
+            <a class="btn-primary" href="https://zenthtab.gumroad.com/l/xojsn" target="_blank" style="justify-content:center;">
+              💳 <span data-en="Pay with card" data-es="Pagar con tarjeta">Pay with card</span>
+            </a>
+            <a class="btn-outline" href="https://nowpayments.io" target="_blank" style="justify-content:center;">
+              ₿ <span data-en="Pay with crypto" data-es="Pagar con crypto">Pay with crypto</span>
+            </a>
+          </div>
+          <p style="font-size:0.72rem;color:var(--white-40);margin-top:1rem;" data-en="License key delivered instantly by email" data-es="Licencia enviada al instante por correo">License key delivered instantly by email</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="container" style="text-align:center;">
+      <p class="section-label" style="justify-content:center;" data-en="Simple pricing" data-es="Precio simple">Simple pricing</p>
+      <h2 data-en="Free to start, Pro to love." data-es="Gratis para empezar, Pro para amar.">Free to start, <em data-en="Pro to love." data-es="Pro para amar.">Pro to love.</em></h2>
+      <p class="section-sub" style="margin:0 auto 3rem;" data-en="No subscriptions. No tricks. One fair price." data-es="Sin suscripciones. Sin trucos. Un precio justo.">No subscriptions. No tricks. One fair price.</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <p class="pricing-name">Free</p>
+          <div class="pricing-price">$0</div>
+          <p class="pricing-period" data-en="Forever" data-es="Para siempre">Forever</p>
+          <ul class="pricing-features">
+            <li data-en="Clock, date & weather" data-es="Reloj, fecha y clima">Clock, date & weather</li>
+            <li data-en="Daily quotes" data-es="Frases del día">Daily quotes</li>
+            <li data-en="Up to 5 tasks" data-es="Hasta 5 tareas">Up to 5 tasks</li>
+            <li data-en="3 shortcuts" data-es="3 accesos directos">3 shortcuts</li>
+            <li data-en="6 rotating wallpapers" data-es="6 fondos rotativos">6 rotating wallpapers</li>
+            <li class="muted" data-en="Pomodoro timer" data-es="Temporizador Pomodoro">Pomodoro timer</li>
+            <li class="muted" data-en="Color themes" data-es="Temas de color">Color themes</li>
+            <li class="muted" data-en="Custom photo" data-es="Foto personalizada">Custom photo</li>
+          </ul>
+          <a class="btn-outline" href="https://chrome.google.com/webstore" target="_blank" style="width:100%;justify-content:center;" data-en="Add to Chrome" data-es="Agregar a Chrome">Add to Chrome</a>
+        </div>
+        <div class="pricing-card featured">
+          <span class="pricing-badge" data-en="Best value" data-es="Mejor valor">Best value</span>
+          <p class="pricing-name">Pro</p>
+          <div class="pricing-price">$15</div>
+          <p class="pricing-period" data-en="One-time · No subscription" data-es="Pago único · Sin suscripción">One-time · No subscription</p>
+          <ul class="pricing-features">
+            <li data-en="Everything in Free" data-es="Todo lo de Free">Everything in Free</li>
+            <li data-en="Unlimited tasks" data-es="Tareas ilimitadas">Unlimited tasks</li>
+            <li data-en="6 custom shortcuts" data-es="6 accesos directos">6 custom shortcuts</li>
+            <li data-en="Pomodoro timer" data-es="Temporizador Pomodoro">Pomodoro timer</li>
+            <li data-en="7 color themes" data-es="7 temas de color">7 color themes</li>
+            <li data-en="Your own photo" data-es="Tu propia foto">Your own photo</li>
+            <li data-en="Daily Unsplash wallpapers" data-es="Fondos Unsplash diarios">Daily Unsplash wallpapers</li>
+            <li data-en="No upgrade popups" data-es="Sin interrupciones">No upgrade popups</li>
+          </ul>
+          <a class="btn-primary" href="https://zenthtab.gumroad.com/l/xojsn" target="_blank" style="width:100%;justify-content:center;" data-en="Get Pro — $15" data-es="Obtener Pro — $15">Get Pro — $15</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <p class="section-label" data-en="Questions" data-es="Preguntas">Questions</p>
+      <h2><em data-en="FAQ" data-es="FAQ">FAQ</em></h2>
+      <div class="faq-list" id="faq-list"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <a class="footer-logo" href="#">Zenth <span>Tab</span></a>
+      <p class="footer-copy" data-en="© 2026 Zenth HQ. All rights reserved." data-es="© 2026 Zenth HQ. Todos los derechos reservados.">© 2026 Zenth HQ. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="/cdn-cgi/l/email-protection#7b131e1717143b011e150f13130a55181416"><span class="__cf_email__" data-cfemail="3058555c5c5f704a555e445858411e535f5d">[email&#160;protected]</span></a></li>
+        <li><a href="https://zenthtab.gumroad.com/l/xojsn" target="_blank" data-en="Buy Pro" data-es="Comprar Pro">Buy Pro</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- LANG TOGGLE -->
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+  </div>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ── SCREENSHOT TABS ──
+    function showTab(tab) {
+      document.getElementById('tab-free').style.display = tab === 'free' ? 'grid' : 'none';
+      document.getElementById('tab-pro').style.display = tab === 'pro' ? 'grid' : 'none';
+      document.querySelectorAll('.ss-tab').forEach((btn, i) => {
+        const isActive = (tab === 'free' && i === 0) || (tab === 'pro' && i === 1);
+        btn.style.background = isActive ? 'var(--teal)' : 'var(--white-08)';
+        btn.style.color = isActive ? 'var(--bg)' : 'var(--white-70)';
+        btn.style.border = isActive ? 'none' : '1px solid var(--white-15)';
+        btn.style.fontWeight = isActive ? '500' : '400';
+      });
+    }
+
+    // ── HERO SCREENSHOT BY LANG ──
+    function updateHeroScreenshot(lang) {
+      const img = document.getElementById('hero-screenshot');
+      if (img) img.src = lang === 'es' ? 'free-es-main.png' : 'pro-en-main.png';
+    }
+
+    // ── LANGUAGE SYSTEM ──
+    let currentLang = navigator.language.startsWith('es') ? 'es' : 'en';
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+      });
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+      updateHeroScreenshot(lang);
+      renderFAQ();
+    }
+
+    // ── FAQ DATA ──
+    const faqs = {
+      en: [
+        { q: 'Is Zenth Tab really free?', a: 'Yes! The free version is free forever with no time limits. You get clock, weather, quotes, tasks, shortcuts and rotating wallpapers at no cost.' },
+        { q: 'How does the license key work?', a: 'After purchase you receive a license key by email. Open a new tab, click ✦ Pro in the top right, paste your key and click Activate. That\'s it — no account needed.' },
+        { q: 'Can I use it on multiple computers?', a: 'Yes. Your license key works on any number of Chrome browsers. Just activate it on each device.' },
+        { q: 'What payment methods do you accept?', a: 'We accept credit/debit cards via Gumroad and crypto (USDT TRC20, USDC Solana) via NOWPayments.' },
+        { q: 'Is my purchase secure?', a: 'Yes. Card payments are processed securely by Gumroad. Crypto payments via NOWPayments. We never store your payment details. All sales are final.' },
+        { q: 'Will there be future updates?', a: 'Yes. All future updates to Zenth Tab are included with your Pro license at no additional cost.' },
+      ],
+      es: [
+        { q: '¿Es Zenth Tab realmente gratis?', a: 'Sí. La versión gratuita es gratis para siempre sin límite de tiempo. Obtienes reloj, clima, frases, tareas, accesos directos y fondos rotativos sin costo.' },
+        { q: '¿Cómo funciona la licencia?', a: 'Después de comprar recibes una clave de licencia por correo. Abre una nueva pestaña, haz clic en ✦ Pro (esquina superior derecha), pega tu clave y haz clic en Activar. Sin cuenta necesaria.' },
+        { q: '¿Puedo usarlo en múltiples computadoras?', a: 'Sí. Tu clave de licencia funciona en cualquier número de navegadores Chrome. Solo actívala en cada dispositivo.' },
+        { q: '¿Qué métodos de pago aceptan?', a: 'Aceptamos tarjetas de crédito/débito vía Gumroad y crypto (USDT TRC20, USDC Solana) vía NOWPayments.' },
+        { q: '¿Mi compra es segura?', a: 'Sí. Los pagos con tarjeta son procesados de forma segura por Gumroad. Pagos crypto vía NOWPayments. Nunca almacenamos tus datos de pago. Todas las ventas son finales.' },
+        { q: '¿Habrá actualizaciones futuras?', a: 'Sí. Todas las actualizaciones futuras de Zenth Tab están incluidas con tu licencia Pro sin costo adicional.' },
+      ]
+    };
+
+    function renderFAQ() {
+      const list = document.getElementById('faq-list');
+      list.innerHTML = '';
+      faqs[currentLang].forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'faq-item';
+        div.innerHTML = `
+          <button class="faq-q" onclick="toggleFAQ(this)">
+            ${item.q}
+            <span>+</span>
+          </button>
+          <div class="faq-a">${item.a}</div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function toggleFAQ(btn) {
+      const answer = btn.nextElementSibling;
+      const isOpen = answer.classList.contains('open');
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-q').forEach(b => b.classList.remove('open'));
+      if (!isOpen) {
+        answer.classList.add('open');
+        btn.classList.add('open');
+      }
+    }
+
+    // ── INIT ─�
