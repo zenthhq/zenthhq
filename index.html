@@ -1031,7 +1031,7 @@
       <a class="footer-logo" href="#">Zenth <span>Tab</span></a>
       <p class="footer-copy" data-en="© 2026 Zenth HQ. All rights reserved." data-es="© 2026 Zenth HQ. Todos los derechos reservados.">© 2026 Zenth HQ. All rights reserved.</p>
       <ul class="footer-links">
-        <li><a href="/cdn-cgi/l/email-protection#7b131e1717143b011e150f13130a55181416"><span class="__cf_email__" data-cfemail="3058555c5c5f704a555e445858411e535f5d">[email&#160;protected]</span></a></li>
+        <li><a href="mailto:hello@zenthhq.com" style="color:var(--white-40);text-decoration:none;">hello@zenthhq.com</a></li>
         <li><a href="https://zenthtab.gumroad.com/l/xojsn" target="_blank" data-en="Buy Pro" data-es="Comprar Pro">Buy Pro</a></li>
       </ul>
     </div>
@@ -1043,7 +1043,7 @@
     <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
   </div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     // ── SCREENSHOT TABS ──
     function showTab(tab) {
       document.getElementById('tab-free').style.display = tab === 'free' ? 'grid' : 'none';
@@ -1125,4 +1125,9 @@
       }
     }
 
-    // ── INIT ─�
+        // INIT
+    setLang(currentLang);
+    renderFAQ();
+  </script>
+</body>
+</html>
