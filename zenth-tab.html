@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zenth Tab — A beautiful new tab for Chrome</title>
+  <meta name="description" content="Replace your new tab with a stunning, minimal dashboard. Pay once, yours forever."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --teal: #2dd4bf;
+      --teal-dim: rgba(45,212,191,0.12);
+      --teal-border: rgba(45,212,191,0.25);
+      --bg: #060f16;
+      --bg2: #0d1f2d;
+      --bg3: #071521;
+      --white: #ffffff;
+      --w70: rgba(255,255,255,0.7);
+      --w40: rgba(255,255,255,0.4);
+      --w15: rgba(255,255,255,0.15);
+      --w08: rgba(255,255,255,0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--white); font-family: 'DM Sans', sans-serif; font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 4rem;
+      background: rgba(6,15,22,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--w08);
+    }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--white); text-decoration: none; }
+    .nav-logo .accent { color: var(--teal); }
+    .nav-back { display: flex; align-items: center; gap: 6px; color: var(--w40); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .nav-back:hover { color: var(--teal); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--w70); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--white); }
+    .btn-primary { background: var(--teal); color: var(--bg); border: none; border-radius: 8px; padding: 0.6rem 1.4rem; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: opacity 0.2s, transform 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--w70); border: 1px solid var(--w15); border-radius: 8px; padding: 0.6rem 1.4rem; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-outline:hover { border-color: var(--teal-border); color: var(--teal); }
+
+    #hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 8rem 2rem 4rem; position: relative; overflow: hidden; }
+    .hero-glow { position: absolute; top: 20%; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(45,212,191,0.1) 0%, transparent 70%); pointer-events: none; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; justify-content: center; opacity: 0; animation: fadeUp 0.6s ease 0.1s forwards; }
+    .hero-eyebrow::before, .hero-eyebrow::after { content: ''; width: 28px; height: 1px; background: var(--teal); opacity: 0.5; }
+    h1 { font-family: 'DM Serif Display', serif; font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; max-width: 800px; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards; }
+    h1 em { font-style: italic; color: var(--teal); }
+    .hero-sub { font-size: 1.1rem; color: var(--w70); max-width: 500px; margin-bottom: 3rem; opacity: 0; animation: fadeUp 0.6s ease 0.3s forwards; }
+    .hero-actions { display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; opacity: 0; animation: fadeUp 0.6s ease 0.4s forwards; }
+    .hero-note { font-size: 0.75rem; color: var(--w40); margin-bottom: 3rem; opacity: 0; animation: fadeUp 0.6s ease 0.45s forwards; }
+
+    .browser-mockup { width: 100%; max-width: 900px; background: var(--bg2); border-radius: 12px; border: 1px solid var(--w08); overflow: hidden; box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(45,212,191,0.1); opacity: 0; animation: fadeUp 0.7s ease 0.5s forwards; }
+    .browser-bar { background: #0a1a27; padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--w08); }
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .browser-dot:nth-child(1) { background: #ff5f57; }
+    .browser-dot:nth-child(2) { background: #febc2e; }
+    .browser-dot:nth-child(3) { background: #28c840; }
+    .browser-url { flex: 1; background: var(--w08); border-radius: 6px; padding: 4px 12px; font-size: 0.75rem; color: var(--w40); text-align: center; }
+
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+    .section-label::before { content: ''; width: 20px; height: 1px; background: var(--teal); opacity: 0.6; }
+    h2 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; line-height: 1.2; margin-bottom: 1rem; }
+    h2 em { font-style: italic; color: var(--teal); }
+    .section-sub { color: var(--w70); font-size: 1rem; max-width: 500px; margin-bottom: 3rem; }
+
+    #features { background: var(--bg); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .feature-card { background: var(--bg2); border: 1px solid var(--w08); border-radius: 16px; padding: 1.75rem; transition: border-color 0.3s, transform 0.3s; }
+    .feature-card:hover { border-color: var(--teal-border); transform: translateY(-3px); }
+    .feature-icon { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
+    .feature-title { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
+    .feature-desc { font-size: 0.875rem; color: var(--w70); line-height: 1.6; }
+
+    #pro { background: var(--bg2); border-top: 1px solid var(--w08); border-bottom: 1px solid var(--w08); }
+    .pro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .pro-features-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .pro-features-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.95rem; color: var(--w70); }
+    .pro-features-list li::before { content: '✓'; color: var(--teal); font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+    .pro-card { background: var(--bg3); border: 1px solid var(--teal-border); border-radius: 20px; padding: 2.5rem; text-align: center; position: relative; overflow: hidden; }
+    .pro-card::before { content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: radial-gradient(circle, rgba(45,212,191,0.12) 0%, transparent 70%); pointer-events: none; }
+    .pro-price { font-family: 'DM Serif Display', serif; font-size: 4rem; font-weight: 400; color: var(--white); line-height: 1; margin-bottom: 0.25rem; }
+    .pro-price-note { font-size: 0.8rem; color: var(--w40); margin-bottom: 2rem; }
+    .pro-card-title { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.5rem; }
+    .pro-divider { height: 1px; background: var(--w08); margin: 1.5rem 0; }
+    .pro-pay-options { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    #pricing { background: var(--bg); }
+    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 700px; margin: 0 auto; }
+    .pricing-card { background: var(--bg2); border: 1px solid var(--w08); border-radius: 20px; padding: 2rem; }
+    .pricing-card.featured { border-color: var(--teal-border); background: var(--bg3); position: relative; }
+    .pricing-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--teal); color: var(--bg); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    .pricing-name { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--w40); margin-bottom: 1rem; }
+    .pricing-price { font-family: 'DM Serif Display', serif; font-size: 2.5rem; font-weight: 400; margin-bottom: 0.25rem; }
+    .pricing-period { font-size: 0.8rem; color: var(--w40); margin-bottom: 1.5rem; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.5rem; }
+    .pricing-features li { font-size: 0.85rem; color: var(--w70); display: flex; align-items: center; gap: 8px; }
+    .pricing-features li::before { content: '✓'; color: var(--teal); font-size: 0.75rem; flex-shrink: 0; }
+    .pricing-features li.muted { color: var(--w40); }
+    .pricing-features li.muted::before { content: '—'; color: var(--w15); }
+
+    /* SCREENSHOTS */
+    #screenshots { background: var(--bg2); border-top: 1px solid var(--w08); }
+    .ss-tabs { display: flex; gap: 8px; margin-bottom: 2rem; }
+    .ss-tab { border-radius: 8px; padding: 8px 20px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .ss-tab.active { background: var(--teal); color: var(--bg); border: none; font-weight: 500; }
+    .ss-tab:not(.active) { background: var(--w08); color: var(--w70); border: 1px solid var(--w15); }
+    .ss-panel { display: none; }
+    .ss-panel.active { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    .ss-panel.two-col { grid-template-columns: 1fr 1fr; }
+
+    #faq { background: var(--bg); border-top: 1px solid var(--w08); }
+    .faq-list { max-width: 680px; display: flex; flex-direction: column; gap: 1px; }
+    .faq-item { border-bottom: 1px solid var(--w08); }
+    .faq-q { width: 100%; background: none; border: none; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 400; text-align: left; padding: 1.25rem 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .faq-q span { transition: transform 0.3s; color: var(--teal); font-size: 1.1rem; }
+    .faq-q.open span { transform: rotate(45deg); }
+    .faq-a { font-size: 0.9rem; color: var(--w70); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s; }
+    .faq-a.open { max-height: 300px; padding-bottom: 1.25rem; }
+
+    footer { background: var(--bg); border-top: 1px solid var(--w08); padding: 2.5rem 4rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--w70); text-decoration: none; }
+    .footer-logo .accent { color: var(--teal); }
+    .footer-copy { font-size: 0.8rem; color: var(--w40); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a { font-size: 0.8rem; color: var(--w40); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--teal); }
+
+    .lang-toggle { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 50; background: var(--bg2); border: 1px solid var(--w15); border-radius: 20px; padding: 4px; display: flex; gap: 2px; }
+    .lang-btn { background: none; border: none; color: var(--w40); font-family: 'DM Sans', sans-serif; font-size: 0.75rem; padding: 4px 10px; border-radius: 16px; cursor: pointer; transition: all 0.2s; }
+    .lang-btn.active { background: var(--teal); color: var(--bg); font-weight: 500; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .pro-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .ss-panel.two-col { grid-template-columns: 1fr; }
+      footer { padding: 2rem 1.5rem; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">Zenth <span class="accent">HQ</span></a>
+    <a class="nav-back" href="index.html">← <span data-en="All products" data-es="Todos los productos">All products</span></a>
+    <ul class="nav-links">
+      <li><a href="#features" data-en="Features" data-es="Funciones">Features</a></li>
+      <li><a href="#pricing" data-en="Pricing" data-es="Precio">Pricing</a></li>
+      <li><a href="#faq" data-en="FAQ" data-es="FAQ">FAQ</a></li>
+      <li><a class="btn-primary" href="https://chrome.google.com/webstore" target="_blank" data-en="Add to Chrome" data-es="Agregar a Chrome">Add to Chrome</a></li>
+    </ul>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-glow"></div>
+    <p class="hero-eyebrow" data-en="New Tab Extension for Chrome" data-es="Extensión de nueva pestaña para Chrome">New Tab Extension for Chrome</p>
+    <h1>
+      <span data-en="Your new tab," data-es="Tu nueva pestaña,">Your new tab,</span><br/>
+      <em data-en="beautifully reimagined." data-es="bellamente reinventada.">beautifully reimagined.</em>
+    </h1>
+    <p class="hero-sub" data-en="Replace your blank new tab with a stunning dashboard. Tasks, weather, Pomodoro, custom wallpapers and more — pay once, yours forever." data-es="Reemplaza tu nueva pestaña en blanco con un dashboard impresionante. Tareas, clima, Pomodoro, fondos personalizados y más — paga una vez, es tuya para siempre.">
+      Replace your blank new tab with a stunning dashboard.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="https://chrome.google.com/webstore" target="_blank">
+        ✦ <span data-en="Add to Chrome — Free" data-es="Agregar a Chrome — Gratis">Add to Chrome — Free</span>
+      </a>
+      <a class="btn-outline" href="#pricing">
+        <span data-en="Get Pro — $15" data-es="Obtener Pro — $15">Get Pro — $15</span>
+      </a>
+    </div>
+    <p class="hero-note" data-en="Free forever · No account required · Chrome only" data-es="Gratis para siempre · Sin cuenta · Solo Chrome">Free forever · No account required · Chrome only</p>
+    <div class="browser-mockup">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url" data-en="New Tab" data-es="Nueva pestaña">New Tab</div>
+      </div>
+      <div style="overflow:hidden;line-height:0;">
+        <img id="hero-screenshot" src="free-es-main.png" alt="Zenth Tab" style="width:100%;display:block;"/>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <p class="section-label" data-en="Included for free" data-es="Incluido gratis">Included for free</p>
+      <h2><span data-en="Everything you need," data-es="Todo lo que necesitas,">Everything you need,</span> <em data-en="from day one." data-es="desde el primer día.">from day one.</em></h2>
+      <p class="section-sub" data-en="No account. No ads. No tracking." data-es="Sin cuenta. Sin anuncios. Sin rastreo.">No account. No ads. No tracking.</p>
+      <div class="features-grid">
+        <div class="feature-card"><span class="feature-icon">🕐</span><div class="feature-title" data-en="Clock & Date" data-es="Reloj y fecha">Clock & Date</div><p class="feature-desc" data-en="A clean, minimal clock with date in your language." data-es="Reloj limpio con fecha en tu idioma.">A clean, minimal clock with date.</p></div>
+        <div class="feature-card"><span class="feature-icon">⛅</span><div class="feature-title" data-en="Live Weather" data-es="Clima en tiempo real">Live Weather</div><p class="feature-desc" data-en="Your city's weather detected automatically." data-es="El clima de tu ciudad detectado automáticamente.">Your city's weather, auto-detected.</p></div>
+        <div class="feature-card"><span class="feature-icon">✦</span><div class="feature-title" data-en="Daily Quotes" data-es="Frases del día">Daily Quotes</div><p class="feature-desc" data-en="A fresh inspirational quote every day." data-es="Una frase inspiradora nueva cada día.">A fresh quote every day.</p></div>
+        <div class="feature-card"><span class="feature-icon">✓</span><div class="feature-title" data-en="Task List" data-es="Lista de tareas">Task List</div><p class="feature-desc" data-en="Up to 5 daily tasks. Simple and fast." data-es="Hasta 5 tareas diarias. Simple y rápido.">Up to 5 daily tasks.</p></div>
+        <div class="feature-card"><span class="feature-icon">🖼</span><div class="feature-title" data-en="Rotating Wallpapers" data-es="Fondos rotativos">Rotating Wallpapers</div><p class="feature-desc" data-en="6 curated Unsplash photos rotating daily." data-es="6 fotos curadas que rotan diariamente.">6 curated wallpapers rotating daily.</p></div>
+        <div class="feature-card"><span class="feature-icon">🔗</span><div class="feature-title" data-en="Quick Shortcuts" data-es="Accesos directos">Quick Shortcuts</div><p class="feature-desc" data-en="Pin your 3 most visited sites." data-es="Fija tus 3 sitios más visitados.">Pin your 3 most visited sites.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pro">
+    <div class="container">
+      <div class="pro-grid">
+        <div>
+          <p class="section-label" data-en="Zenth Tab Pro" data-es="Zenth Tab Pro">Zenth Tab Pro</p>
+          <h2><span data-en="Unlock the" data-es="Desbloquea el">Unlock the</span> <em data-en="full experience." data-es="experiencia completa.">full experience.</em></h2>
+          <p class="section-sub" data-en="One payment. No subscription. No expiration. Ever." data-es="Un solo pago. Sin suscripción. Sin vencimiento. Jamás.">One payment. No subscription. Ever.</p>
+          <ul class="pro-features-list">
+            <li data-en="Your own photo as background" data-es="Tu propia foto como fondo">Your own photo as background</li>
+            <li data-en="Daily Unsplash wallpapers" data-es="Fondos Unsplash diarios">Daily Unsplash wallpapers</li>
+            <li data-en="Unlimited tasks" data-es="Tareas ilimitadas">Unlimited tasks</li>
+            <li data-en="Up to 6 custom shortcuts" data-es="Hasta 6 accesos directos">Up to 6 custom shortcuts</li>
+            <li data-en="Pomodoro timer with focus/break modes" data-es="Temporizador Pomodoro">Pomodoro timer</li>
+            <li data-en="7 color themes" data-es="7 temas de color">7 color themes</li>
+            <li data-en="No upgrade popups, ever" data-es="Sin interrupciones de pago, jamás">No upgrade popups, ever</li>
+          </ul>
+        </div>
+        <div class="pro-card">
+          <p class="pro-card-title" data-en="One-time payment" data-es="Pago único">One-time payment</p>
+          <div class="pro-price">$15</div>
+          <p class="pro-price-note" data-en="Pay once · Use forever" data-es="Paga una vez · Úsalo para siempre">Pay once · Use forever</p>
+          <div class="pro-divider"></div>
+          <div class="pro-pay-options">
+            <a class="btn-primary" href="https://zenthtab.gumroad.com/l/xojsn" target="_blank" style="justify-content:center;">💳 <span data-en="Pay with card" data-es="Pagar con tarjeta">Pay with card</span></a>
+            <a class="btn-outline" href="https://nowpayments.io" target="_blank" style="justify-content:center;">₿ <span data-en="Pay with crypto" data-es="Pagar con crypto">Pay with crypto</span></a>
+          </div>
+          <p style="font-size:0.72rem;color:var(--w40);margin-top:1rem;" data-en="License key delivered instantly by email" data-es="Licencia enviada al instante por correo">License key delivered instantly by email</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenshots">
+    <div class="container">
+      <p class="section-label" data-en="See it in action" data-es="Míralo en acción">See it in action</p>
+      <h2><span data-en="Free &" data-es="Free y">Free &</span> <em data-en="Pro, side by side." data-es="Pro, lado a lado.">Pro, side by side.</em></h2>
+      <div class="ss-tabs">
+        <button class="ss-tab active" onclick="showTab('free')" data-en="Free version" data-es="Versión Free">Free version</button>
+        <button class="ss-tab" onclick="showTab('pro')" data-en="Pro version" data-es="Versión Pro">Pro version</button>
+      </div>
+      <div id="tab-free" class="ss-panel active">
+        <div class="browser-mockup">
+          <div class="browser-bar"><div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div><div class="browser-url" data-en="New Tab — Free" data-es="Nueva pestaña — Free">New Tab — Free</div></div>
+          <div style="overflow:hidden;line-height:0;"><img src="free-es-main.png" alt="Zenth Tab Free" style="width:100%;display:block;"/></div>
+        </div>
+      </div>
+      <div id="tab-pro" class="ss-panel two-col">
+        <div class="browser-mockup" style="grid-column:1/-1;">
+          <div class="browser-bar"><div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div><div class="browser-url" data-en="New Tab — Pro (Sunset theme)" data-es="Nueva pestaña — Pro (tema Sunset)">New Tab — Pro</div></div>
+          <div style="overflow:hidden;line-height:0;"><img src="pro-en-pomodoro.png" alt="Zenth Tab Pro" style="width:100%;display:block;"/></div>
+        </div>
+        <div class="browser-mockup">
+          <div class="browser-bar"><div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div><div class="browser-url" data-en="Settings panel" data-es="Panel de configuración">Settings</div></div>
+          <div style="overflow:hidden;line-height:0;"><img src="pro-en-settings.png" alt="Settings" style="width:100%;display:block;"/></div>
+        </div>
+        <div class="browser-mockup">
+          <div class="browser-bar"><div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div><div class="browser-url" data-en="Pro — Teal theme" data-es="Pro — tema Teal">Pro — Teal</div></div>
+          <div style="overflow:hidden;line-height:0;"><img src="pro-es-main.png" alt="Pro ES" style="width:100%;display:block;"/></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container" style="text-align:center;">
+      <p class="section-label" style="justify-content:center;" data-en="Simple pricing" data-es="Precio simple">Simple pricing</p>
+      <h2><em data-en="Free to start," data-es="Gratis para empezar,">Free to start,</em> <span data-en="Pro to love." data-es="Pro para amar.">Pro to love.</span></h2>
+      <p class="section-sub" style="margin:0 auto 3rem;" data-en="No subscriptions. No tricks. One fair price." data-es="Sin suscripciones. Sin trucos. Un precio justo.">No subscriptions. One fair price.</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <p class="pricing-name">Free</p>
+          <div class="pricing-price">$0</div>
+          <p class="pricing-period" data-en="Forever" data-es="Para siempre">Forever</p>
+          <ul class="pricing-features">
+            <li data-en="Clock, date & weather" data-es="Reloj, fecha y clima">Clock, date & weather</li>
+            <li data-en="Daily quotes" data-es="Frases del día">Daily quotes</li>
+            <li data-en="Up to 5 tasks" data-es="Hasta 5 tareas">Up to 5 tasks</li>
+            <li data-en="3 shortcuts" data-es="3 accesos directos">3 shortcuts</li>
+            <li data-en="6 rotating wallpapers" data-es="6 fondos rotativos">6 rotating wallpapers</li>
+            <li class="muted" data-en="Pomodoro timer" data-es="Temporizador Pomodoro">Pomodoro timer</li>
+            <li class="muted" data-en="Color themes" data-es="Temas de color">Color themes</li>
+            <li class="muted" data-en="Custom photo" data-es="Foto personalizada">Custom photo</li>
+          </ul>
+          <a class="btn-outline" href="https://chrome.google.com/webstore" target="_blank" style="width:100%;justify-content:center;" data-en="Add to Chrome" data-es="Agregar a Chrome">Add to Chrome</a>
+        </div>
+        <div class="pricing-card featured">
+          <span class="pricing-badge" data-en="Best value" data-es="Mejor valor">Best value</span>
+          <p class="pricing-name">Pro</p>
+          <div class="pricing-price">$15</div>
+          <p class="pricing-period" data-en="One-time · No subscription" data-es="Pago único · Sin suscripción">One-time · No subscription</p>
+          <ul class="pricing-features">
+            <li data-en="Everything in Free" data-es="Todo lo de Free">Everything in Free</li>
+            <li data-en="Unlimited tasks" data-es="Tareas ilimitadas">Unlimited tasks</li>
+            <li data-en="6 custom shortcuts" data-es="6 accesos directos">6 custom shortcuts</li>
+            <li data-en="Pomodoro timer" data-es="Temporizador Pomodoro">Pomodoro timer</li>
+            <li data-en="7 color themes" data-es="7 temas de color">7 color themes</li>
+            <li data-en="Your own photo" data-es="Tu propia foto">Your own photo</li>
+            <li data-en="Daily Unsplash wallpapers" data-es="Fondos Unsplash diarios">Daily Unsplash wallpapers</li>
+            <li data-en="No upgrade popups" data-es="Sin interrupciones">No upgrade popups</li>
+          </ul>
+          <a class="btn-primary" href="https://zenthtab.gumroad.com/l/xojsn" target="_blank" style="width:100%;justify-content:center;" data-en="Get Pro — $15" data-es="Obtener Pro — $15">Get Pro — $15</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <p class="section-label" data-en="Questions" data-es="Preguntas">Questions</p>
+      <h2><em>FAQ</em></h2>
+      <div class="faq-list" id="faq-list"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <a class="footer-logo" href="index.html">Zenth <span class="accent">HQ</span></a>
+      <p class="footer-copy" data-en="© 2026 Zenth HQ. All rights reserved." data-es="© 2026 Zenth HQ. Todos los derechos reservados.">© 2026 Zenth HQ. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="mailto:hello@zenthhq.com">hello@zenthhq.com</a></li>
+        <li><a href="zenth-focus.html">Zenth Focus</a></li>
+        <li><a href="index.html" data-en="All products" data-es="Todos los productos">All products</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+  </div>
+
+  <script>
+    let currentLang = navigator.language.startsWith('es') ? 'es' : 'en';
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('[data-en]').forEach(el => { el.textContent = el.getAttribute('data-' + lang); });
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+      const img = document.getElementById('hero-screenshot');
+      if (img) img.src = lang === 'es' ? 'free-es-main.png' : 'pro-en-main.png';
+      renderFAQ();
+    }
+
+    function showTab(tab) {
+      document.getElementById('tab-free').classList.toggle('active', tab === 'free');
+      document.getElementById('tab-pro').classList.toggle('active', tab === 'pro');
+      document.querySelectorAll('.ss-tab').forEach((btn, i) => {
+        btn.classList.toggle('active', (tab === 'free' && i === 0) || (tab === 'pro' && i === 1));
+      });
+    }
+
+    const faqs = {
+      en: [
+        { q: 'Is Zenth Tab really free?', a: 'Yes! The free version is free forever. You get clock, weather, quotes, tasks, shortcuts and wallpapers at no cost.' },
+        { q: 'How does the license key work?', a: "After purchase you receive a license key by email. Open a new tab, click ✦ Pro in the top right, paste your key and click Activate. No account needed." },
+        { q: 'Can I use it on multiple computers?', a: 'Yes. Your license key works on any number of Chrome browsers.' },
+        { q: 'What payment methods do you accept?', a: 'We accept credit/debit cards via Gumroad and crypto (USDT TRC20, USDC Solana) via NOWPayments.' },
+        { q: 'Is my purchase secure?', a: 'Yes. Card payments processed by Gumroad. Crypto via NOWPayments. We never store your payment details. All sales are final.' },
+        { q: 'Will there be future updates?', a: 'Yes. All future updates are included with your Pro license at no additional cost.' },
+      ],
+      es: [
+        { q: '¿Es Zenth Tab realmente gratis?', a: 'Sí. La versión gratuita es gratis para siempre. Obtienes reloj, clima, frases, tareas, accesos directos y fondos sin costo.' },
+        { q: '¿Cómo funciona la licencia?', a: 'Después de comprar recibes una clave por correo. Abre una nueva pestaña, haz clic en ✦ Pro, pega tu clave y activa. Sin cuenta necesaria.' },
+        { q: '¿Puedo usarlo en múltiples computadoras?', a: 'Sí. Tu clave funciona en cualquier número de navegadores Chrome.' },
+        { q: '¿Qué métodos de pago aceptan?', a: 'Aceptamos tarjetas vía Gumroad y crypto (USDT TRC20, USDC Solana) vía NOWPayments.' },
+        { q: '¿Mi compra es segura?', a: 'Sí. Pagos con tarjeta procesados por Gumroad. Crypto vía NOWPayments. Nunca almacenamos tus datos de pago. Todas las ventas son finales.' },
+        { q: '¿Habrá actualizaciones futuras?', a: 'Sí. Todas las actualizaciones futuras están incluidas con tu licencia Pro sin costo adicional.' },
+      ]
+    };
+
+    function renderFAQ() {
+      const list = document.getElementById('faq-list');
+      list.innerHTML = '';
+      faqs[currentLang].forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'faq-item';
+        div.innerHTML = `<button class="faq-q" onclick="toggleFAQ(this)">${item.q}<span>+</span></button><div class="faq-a">${item.a}</div>`;
+        list.appendChild(div);
+      });
+    }
+
+    function toggleFAQ(btn) {
+      const answer = btn.nextElementSibling;
+      const isOpen = answer.classList.contains('open');
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-q').forEach(b => b.classList.remove('open'));
+      if (!isOpen) { answer.classList.add('open'); btn.classList.add('open'); }
+    }
+
+    setLang(currentLang);
+    renderFAQ();
+  </script>
+</body>
+</html>
