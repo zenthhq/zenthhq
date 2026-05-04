@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy — Zenth HQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --teal: #2dd4bf;
+      --bg: #060f16;
+      --bg2: #0d1f2d;
+      --white: #ffffff;
+      --w70: rgba(255,255,255,0.7);
+      --w40: rgba(255,255,255,0.4);
+      --w08: rgba(255,255,255,0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--white); font-family: 'DM Sans', sans-serif; font-weight: 300; line-height: 1.8; }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 4rem;
+      background: rgba(6,15,22,0.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--w08);
+    }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--white); text-decoration: none; }
+    .nav-logo .accent { color: var(--teal); }
+    .nav-back { color: var(--w40); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .nav-back:hover { color: var(--teal); }
+
+    main { max-width: 720px; margin: 0 auto; padding: 5rem 2rem 6rem; }
+
+    .page-label {
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .page-label::before { content: ''; width: 20px; height: 1px; background: var(--teal); opacity: 0.6; }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem; font-weight: 400; line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .updated {
+      font-size: 0.8rem; color: var(--w40); margin-bottom: 3rem;
+      padding-bottom: 2rem; border-bottom: 1px solid var(--w08);
+    }
+
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem; font-weight: 400;
+      color: var(--white); margin: 2.5rem 0 0.75rem;
+    }
+
+    p { font-size: 0.95rem; color: var(--w70); margin-bottom: 1rem; }
+
+    ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+    ul li { font-size: 0.95rem; color: var(--w70); display: flex; align-items: flex-start; gap: 10px; }
+    ul li::before { content: '✓'; color: var(--teal); font-size: 0.8rem; flex-shrink: 0; margin-top: 4px; }
+
+    .highlight {
+      background: var(--bg2); border: 1px solid var(--w08);
+      border-left: 3px solid var(--teal);
+      border-radius: 8px; padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .highlight p { margin: 0; color: var(--w70); font-size: 0.9rem; }
+
+    a { color: var(--teal); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    footer { border-top: 1px solid var(--w08); padding: 2rem 4rem; }
+    .footer-inner { max-width: 720px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--w40); text-decoration: none; }
+    .footer-logo .accent { color: var(--teal); }
+    .footer-copy { font-size: 0.8rem; color: var(--w40); }
+
+    .lang-toggle { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 50; background: var(--bg2); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 4px; display: flex; gap: 2px; }
+    .lang-btn { background: none; border: none; color: var(--w40); font-family: 'DM Sans', sans-serif; font-size: 0.75rem; padding: 4px 10px; border-radius: 16px; cursor: pointer; transition: all 0.2s; }
+    .lang-btn.active { background: var(--teal); color: var(--bg); font-weight: 500; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      footer { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">Zenth <span class="accent">HQ</span></a>
+    <a class="nav-back" href="index.html">← <span data-en="All products" data-es="Todos los productos">All products</span></a>
+  </nav>
+
+  <main>
+    <p class="page-label" data-en="Legal" data-es="Legal">Legal</p>
+    <h1 data-en="Privacy Policy" data-es="Política de Privacidad">Privacy Policy</h1>
+    <p class="updated" data-en="Last updated: May 2026 · Applies to: Zenth Tab, Zenth Focus" data-es="Última actualización: Mayo 2026 · Aplica a: Zenth Tab, Zenth Focus">Last updated: May 2026 · Applies to: Zenth Tab, Zenth Focus</p>
+
+    <div class="highlight">
+      <p data-en="The short version: Zenth HQ extensions do not collect, store, or transmit any personal data. Everything stays on your device." data-es="La versión corta: Las extensiones de Zenth HQ no recopilan, almacenan ni transmiten ningún dato personal. Todo permanece en tu dispositivo.">
+        The short version: Zenth HQ extensions do not collect, store, or transmit any personal data. Everything stays on your device.
+      </p>
+    </div>
+
+    <h2 data-en="1. Data We Do NOT Collect" data-es="1. Datos que NO recopilamos">1. Data We Do NOT Collect</h2>
+    <p data-en="Zenth HQ extensions are built with privacy as a core principle. We do not collect:" data-es="Las extensiones de Zenth HQ están construidas con la privacidad como principio fundamental. No recopilamos:">Zenth HQ extensions are built with privacy as a core principle. We do not collect:</p>
+    <ul>
+      <li data-en="Personal information (name, email, address)" data-es="Información personal (nombre, correo, dirección)">Personal information (name, email, address)</li>
+      <li data-en="Browsing history or visited URLs" data-es="Historial de navegación o URLs visitadas">Browsing history or visited URLs</li>
+      <li data-en="Search queries" data-es="Consultas de búsqueda">Search queries</li>
+      <li data-en="Location data" data-es="Datos de ubicación">Location data</li>
+      <li data-en="Usage statistics or analytics" data-es="Estadísticas de uso o analíticas">Usage statistics or analytics</li>
+      <li data-en="Device identifiers" data-es="Identificadores del dispositivo">Device identifiers</li>
+    </ul>
+
+    <h2 data-en="2. Data Stored Locally" data-es="2. Datos almacenados localmente">2. Data Stored Locally</h2>
+    <p data-en="Our extensions store the following data locally on your device using Chrome's storage API. This data never leaves your browser:" data-es="Nuestras extensiones almacenan los siguientes datos localmente en tu dispositivo usando la API de almacenamiento de Chrome. Estos datos nunca salen de tu navegador:">Our extensions store the following data locally on your device using Chrome's storage API. This data never leaves your browser:</p>
+    <ul>
+      <li data-en="Your tasks and to-do items (Zenth Tab)" data-es="Tus tareas (Zenth Tab)">Your tasks and to-do items (Zenth Tab)</li>
+      <li data-en="Custom shortcuts and URLs (Zenth Tab)" data-es="Accesos directos y URLs (Zenth Tab)">Custom shortcuts and URLs (Zenth Tab)</li>
+      <li data-en="Theme and wallpaper preferences (Zenth Tab)" data-es="Preferencias de tema y fondo (Zenth Tab)">Theme and wallpaper preferences (Zenth Tab)</li>
+      <li data-en="License key for Pro activation" data-es="Clave de licencia para activación Pro">License key for Pro activation</li>
+      <li data-en="Blocked site list (Zenth Focus)" data-es="Lista de sitios bloqueados (Zenth Focus)">Blocked site list (Zenth Focus)</li>
+      <li data-en="Session history (Zenth Focus Pro)" data-es="Historial de sesiones (Zenth Focus Pro)">Session history (Zenth Focus Pro)</li>
+    </ul>
+
+    <h2 data-en="3. External Services" data-es="3. Servicios externos">3. External Services</h2>
+    <p data-en="Some features require fetching data from external APIs. In all cases, only the minimum necessary data is sent:" data-es="Algunas funciones requieren obtener datos de APIs externas. En todos los casos, solo se envía el mínimo de datos necesarios:">Some features require fetching data from external APIs:</p>
+    <ul>
+      <li data-en="Weather: Your approximate location (city-level, via IP address) is sent to ip-api.com and Open-Meteo to fetch local weather. No account is created." data-es="Clima: Tu ubicación aproximada (nivel de ciudad, vía dirección IP) se envía a ip-api.com y Open-Meteo para obtener el clima local. No se crea ninguna cuenta.">Weather: Your approximate city location (via IP) is sent to ip-api.com and Open-Meteo to fetch local weather. No account is created.</li>
+      <li data-en="Wallpapers: Random wallpapers are fetched from the Unsplash API. No personal data is sent." data-es="Fondos: Los fondos aleatorios se obtienen de la API de Unsplash. No se envían datos personales.">Wallpapers: Random images are fetched from the Unsplash API. No personal data is sent.</li>
+    </ul>
+
+    <h2 data-en="4. Payments" data-es="4. Pagos">4. Payments</h2>
+    <p data-en="Pro licenses are sold through Gumroad and NOWPayments. These are independent services with their own privacy policies. Zenth HQ does not receive or store your payment information. After purchase, only your license key is stored locally on your device." data-es="Las licencias Pro se venden a través de Gumroad y NOWPayments. Estos son servicios independientes con sus propias políticas de privacidad. Zenth HQ no recibe ni almacena tu información de pago. Después de la compra, solo tu clave de licencia se almacena localmente en tu dispositivo.">
+      Pro licenses are sold through Gumroad and NOWPayments. These are independent services with their own privacy policies. Zenth HQ does not receive or store your payment information.
+    </p>
+
+    <h2 data-en="5. Permissions" data-es="5. Permisos">5. Permissions</h2>
+    <p data-en="Our extensions request only the permissions necessary to function:" data-es="Nuestras extensiones solicitan solo los permisos necesarios para funcionar:">Our extensions request only the permissions necessary to function:</p>
+    <ul>
+      <li data-en="storage — to save your preferences and tasks locally" data-es="storage — para guardar tus preferencias y tareas localmente">storage — to save your preferences and tasks locally</li>
+      <li data-en="geolocation — to detect your city for weather display (Zenth Tab)" data-es="geolocation — para detectar tu ciudad y mostrar el clima (Zenth Tab)">geolocation — to detect your city for weather (Zenth Tab)</li>
+      <li data-en="webNavigation — to redirect blocked sites during focus sessions (Zenth Focus)" data-es="webNavigation — para redirigir sitios bloqueados durante sesiones de enfoque (Zenth Focus)">webNavigation — to redirect blocked sites during focus sessions (Zenth Focus)</li>
+    </ul>
+
+    <h2 data-en="6. Children's Privacy" data-es="6. Privacidad de menores">6. Children's Privacy</h2>
+    <p data-en="Our extensions are not directed at children under 13. We do not knowingly collect any information from children." data-es="Nuestras extensiones no están dirigidas a menores de 13 años. No recopilamos información de menores de forma deliberada.">Our extensions are not directed at children under 13. We do not knowingly collect any information from children.</p>
+
+    <h2 data-en="7. Changes to This Policy" data-es="7. Cambios a esta política">7. Changes to This Policy</h2>
+    <p data-en="We may update this policy occasionally. Changes will be posted on this page with an updated date. Continued use of our extensions after changes constitutes acceptance." data-es="Podemos actualizar esta política ocasionalmente. Los cambios se publicarán en esta página con una fecha actualizada. El uso continuado de nuestras extensiones después de los cambios constituye aceptación.">We may update this policy occasionally. Changes will be posted on this page with an updated date.</p>
+
+    <h2 data-en="8. Contact" data-es="8. Contacto">8. Contact</h2>
+    <p data-en="Questions about this privacy policy? Contact us at:" data-es="¿Preguntas sobre esta política de privacidad? Contáctanos en:">Questions about this privacy policy? Contact us at:</p>
+    <p><a href="mailto:hello@zenthhq.com">hello@zenthhq.com</a></p>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <a class="footer-logo" href="index.html">Zenth <span class="accent">HQ</span></a>
+      <p class="footer-copy" data-en="© 2026 Zenth HQ. All rights reserved." data-es="© 2026 Zenth HQ. Todos los derechos reservados.">© 2026 Zenth HQ. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+  </div>
+
+  <script>
+    let currentLang = navigator.language.startsWith('es') ? 'es' : 'en';
+    function setLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+      });
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+    }
+    setLang(currentLang);
+  </script>
+
+</body>
+</html>
